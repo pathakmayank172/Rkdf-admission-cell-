@@ -1,0 +1,219 @@
+{% extends 'admission/base.html' %}
+
+{% block title %}About Us — RKDF University Ranchi{% endblock %}
+
+{% block content %}
+
+<!-- Page Hero -->
+<section class="page-hero">
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="{% url 'home' %}">Home</a>
+            <span>/</span>
+            <span>About</span>
+        </div>
+        <h1>About RKDF University</h1>
+        <p>Empowering minds, transforming lives — discover our story and vision.</p>
+    </div>
+</section>
+
+
+<!-- About Introduction -->
+<section class="section" style="background:var(--white);">
+    <div class="container">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center;">
+            <div>
+                <div style="display:inline-flex; align-items:center; gap:8px; background:var(--gold-pale); color:var(--gold); padding:6px 14px; border-radius:100px; font-size:0.8rem; font-weight:600; margin-bottom:20px; text-transform:uppercase; letter-spacing:0.5px;">
+                    🏛️ Est. 2012
+                </div>
+                <h2>A Legacy of Academic Excellence</h2>
+                <div class="section-divider" style="margin:16px 0 24px; text-align:left;"></div>
+                <p>
+                    RKDF University Ranchi is a premier private university located in Namkum, 
+                    Ranchi, Jharkhand. Established under the RKDF Group of Institutions — 
+                    a 30-year legacy of educational excellence — the university stands as a 
+                    beacon of quality education in the eastern region of India.
+                </p>
+                <p>
+                    The university offers a wide range of undergraduate, postgraduate, and 
+                    doctoral programs across Engineering, Management, Science, Commerce, 
+                    Law, Pharmacy and Arts. With a UGC-recognized and NAAC-accredited status, 
+                    RKDF University provides globally competitive education right here in Jharkhand.
+                </p>
+                <div style="display:flex; gap:32px; margin-top:32px; flex-wrap:wrap;">
+                    <div>
+                        <div style="font-family:var(--font-heading); font-size:2rem; font-weight:700; color:var(--navy);">5000+</div>
+                        <div style="font-size:0.8rem; color:var(--text-light); text-transform:uppercase; letter-spacing:0.5px;">Students</div>
+                    </div>
+                    <div>
+                        <div style="font-family:var(--font-heading); font-size:2rem; font-weight:700; color:var(--navy);">200+</div>
+                        <div style="font-size:0.8rem; color:var(--text-light); text-transform:uppercase; letter-spacing:0.5px;">Faculty</div>
+                    </div>
+                    <div>
+                        <div style="font-family:var(--font-heading); font-size:2rem; font-weight:700; color:var(--navy);">30+</div>
+                        <div style="font-size:0.8rem; color:var(--text-light); text-transform:uppercase; letter-spacing:0.5px;">Programs</div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <!-- Visual placeholder for university image -->
+                <div style="background:linear-gradient(135deg, var(--navy), var(--navy-light)); border-radius:var(--radius-lg); padding:48px; text-align:center; color:white;">
+                    <div style="font-size:5rem; margin-bottom:24px;">🎓</div>
+                    <h3 style="color:var(--gold-light); margin-bottom:8px;">RKDF University</h3>
+                    <p style="color:rgba(255,255,255,0.7); font-size:0.9rem;">Namkum, Ranchi, Jharkhand</p>
+                    <div style="margin-top:24px; padding-top:24px; border-top:1px solid rgba(255,255,255,0.15); display:flex; justify-content:space-around;">
+                        <div style="text-align:center;">
+                            <div style="color:var(--gold-light); font-family:var(--font-heading); font-size:1.4rem; font-weight:700;">UGC</div>
+                            <div style="color:rgba(255,255,255,0.5); font-size:0.75rem;">Recognized</div>
+                        </div>
+                        <div style="text-align:center;">
+                            <div style="color:var(--gold-light); font-family:var(--font-heading); font-size:1.4rem; font-weight:700;">NAAC</div>
+                            <div style="color:rgba(255,255,255,0.5); font-size:0.75rem;">Accredited</div>
+                        </div>
+                        <div style="text-align:center;">
+                            <div style="color:var(--gold-light); font-family:var(--font-heading); font-size:1.4rem; font-weight:700;">AIU</div>
+                            <div style="color:rgba(255,255,255,0.5); font-size:0.75rem;">Member</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- Vision Mission Values -->
+<section class="section" style="background:var(--off-white);">
+    <div class="container">
+        <div class="section-header">
+            <h2>Vision, Mission & Values</h2>
+            <div class="section-divider"></div>
+        </div>
+        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:24px;">
+            <div style="background:var(--white); border-radius:var(--radius-md); padding:36px; border:1px solid var(--border); border-top:4px solid var(--gold);">
+                <div style="font-size:2rem; margin-bottom:16px;">🔭</div>
+                <h3 style="margin-bottom:12px; font-size:1.3rem;">Our Vision</h3>
+                <p>
+                    To be a globally recognized university that produces innovative, 
+                    ethical and entrepreneurial graduates who contribute to society 
+                    and lead in their respective fields.
+                </p>
+            </div>
+            <div style="background:var(--white); border-radius:var(--radius-md); padding:36px; border:1px solid var(--border); border-top:4px solid var(--navy-light);">
+                <div style="font-size:2rem; margin-bottom:16px;">🎯</div>
+                <h3 style="margin-bottom:12px; font-size:1.3rem;">Our Mission</h3>
+                <p>
+                    To provide accessible, affordable and high-quality education 
+                    through modern curriculum, experienced faculty, research 
+                    opportunities, and industry collaboration.
+                </p>
+            </div>
+            <div style="background:var(--white); border-radius:var(--radius-md); padding:36px; border:1px solid var(--border); border-top:4px solid #38a169;">
+                <div style="font-size:2rem; margin-bottom:16px;">💎</div>
+                <h3 style="margin-bottom:12px; font-size:1.3rem;">Core Values</h3>
+                <p>
+                    Integrity, Excellence, Innovation, Inclusivity and Social 
+                    Responsibility guide every academic and administrative decision 
+                    at RKDF University.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- Infrastructure & Facilities -->
+<section class="section" style="background:var(--white);">
+    <div class="container">
+        <div class="section-header">
+            <h2>Campus & Facilities</h2>
+            <div class="section-divider"></div>
+            <p>Modern infrastructure designed to support academic excellence and student well-being.</p>
+        </div>
+        <div class="values-grid">
+            <div class="value-card">
+                <div class="value-icon">📚</div>
+                <h4>Digital Library</h4>
+                <p style="font-size:0.875rem;">Access to 50,000+ books, journals, and digital resources.</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">🔬</div>
+                <h4>Modern Labs</h4>
+                <p style="font-size:0.875rem;">Well-equipped science, computer, and engineering laboratories.</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">⚽</div>
+                <h4>Sports Complex</h4>
+                <p style="font-size:0.875rem;">Indoor and outdoor sports facilities including gym and courts.</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">🏠</div>
+                <h4>Hostel</h4>
+                <p style="font-size:0.875rem;">Separate hostels for boys and girls with mess facilities.</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">🚌</div>
+                <h4>Transport</h4>
+                <p style="font-size:0.875rem;">Bus service connecting campus to all major areas of Ranchi.</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">🏥</div>
+                <h4>Health Centre</h4>
+                <p style="font-size:0.875rem;">On-campus medical facilities with qualified doctors.</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">🍽️</div>
+                <h4>Cafeteria</h4>
+                <p style="font-size:0.875rem;">Hygienic food court with variety of nutritious meals.</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">📡</div>
+                <h4>Wi-Fi Campus</h4>
+                <p style="font-size:0.875rem;">High-speed internet connectivity across the entire campus.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- Leadership -->
+<section class="section" style="background:var(--navy);">
+    <div class="container">
+        <div class="section-header">
+            <h2 style="color:white;">University Leadership</h2>
+            <div class="section-divider"></div>
+        </div>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:24px;">
+            {% for leader in leaders %}
+            <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:28px; text-align:center;">
+                <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-light));display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin:0 auto 16px;">{{ leader.icon }}</div>
+                <h4 style="color:white; font-size:1rem; margin-bottom:4px;">{{ leader.name }}</h4>
+                <p style="color:var(--gold-light); font-size:0.8rem; margin:0; text-transform:uppercase; letter-spacing:0.5px;">{{ leader.title }}</p>
+            </div>
+            {% empty %}
+            <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:28px; text-align:center;">
+                <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-light));display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin:0 auto 16px;">👨‍💼</div>
+                <h4 style="color:white; font-size:1rem; margin-bottom:4px;">Dr. R.K. Mishra</h4>
+                <p style="color:var(--gold-light); font-size:0.8rem; margin:0; text-transform:uppercase; letter-spacing:0.5px;">Chancellor</p>
+            </div>
+            <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:28px; text-align:center;">
+                <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-light));display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin:0 auto 16px;">👩‍💼</div>
+                <h4 style="color:white; font-size:1rem; margin-bottom:4px;">Prof. S.K. Sharma</h4>
+                <p style="color:var(--gold-light); font-size:0.8rem; margin:0; text-transform:uppercase; letter-spacing:0.5px;">Vice Chancellor</p>
+            </div>
+            <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:28px; text-align:center;">
+                <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-light));display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin:0 auto 16px;">👨‍🏫</div>
+                <h4 style="color:white; font-size:1rem; margin-bottom:4px;">Dr. A.K. Singh</h4>
+                <p style="color:var(--gold-light); font-size:0.8rem; margin:0; text-transform:uppercase; letter-spacing:0.5px;">Registrar</p>
+            </div>
+            <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:28px; text-align:center;">
+                <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-light));display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin:0 auto 16px;">👩‍🔬</div>
+                <h4 style="color:white; font-size:1rem; margin-bottom:4px;">Dr. P. Kumari</h4>
+                <p style="color:var(--gold-light); font-size:0.8rem; margin:0; text-transform:uppercase; letter-spacing:0.5px;">Dean, Admissions</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}

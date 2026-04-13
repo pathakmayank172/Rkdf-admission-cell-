@@ -1,0 +1,175 @@
+{% extends 'admission/base.html' %}
+
+{% block title %}Courses Offered — RKDF University Ranchi{% endblock %}
+
+{% block content %}
+
+<!-- Page Hero -->
+<section class="page-hero">
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="{% url 'home' %}">Home</a>
+            <span>/</span>
+            <span>Courses</span>
+        </div>
+        <h1>Courses Offered</h1>
+        <p>Choose from 30+ programs across Engineering, Management, Science, Commerce and more.</p>
+    </div>
+</section>
+
+
+<!-- Courses Grid -->
+<section class="section">
+    <div class="container">
+
+        <div class="section-header">
+            <h2>Available Programs 2024–25</h2>
+            <div class="section-divider"></div>
+            <p>All programs are UGC recognized and industry-aligned.</p>
+        </div>
+
+        <!-- Course Cards Grid -->
+        <div class="card-grid">
+            {% for course in courses %}
+            <div class="course-card">
+
+                <!-- Card Header (Dark background with course title) -->
+                <div class="course-card-header">
+                    <div class="course-emoji">{{ course.icon }}</div>
+                    <div>
+                        <h3>{{ course.name }}</h3>
+                        <p>{{ course.full_name }}</p>
+                    </div>
+                </div>
+
+                <!-- Card Body (Details) -->
+                <div class="course-card-body">
+
+                    <!-- Description -->
+                    <p style="font-size:0.875rem; margin-bottom:16px;">{{ course.description }}</p>
+
+                    <!-- Duration and Seats -->
+                    <div class="course-meta">
+                        <div class="course-meta-item">
+                            <span class="icon">⏱️</span>
+                            <span>{{ course.duration }}</span>
+                        </div>
+                        <div class="course-meta-item">
+                            <span class="icon">👥</span>
+                            <span>{{ course.seats }} Seats</span>
+                        </div>
+                    </div>
+
+                    <!-- Eligibility -->
+                    <div class="course-eligibility">
+                        <strong>Eligibility:</strong> {{ course.eligibility }}
+                    </div>
+
+                    <!-- Apply Button -->
+                    <a href="{% url 'admission_form' %}?course={{ course.code }}" class="btn btn-navy" style="width:100%; justify-content:center;">
+                        Apply for {{ course.name }} →
+                    </a>
+
+                </div>
+            </div>
+            {% empty %}
+            <p>No courses found. Please check back later.</p>
+            {% endfor %}
+        </div>
+
+    </div>
+</section>
+
+
+<!-- Fee Structure -->
+<section class="section" style="background:var(--white);">
+    <div class="container">
+        <div class="section-header">
+            <h2>Approximate Fee Structure</h2>
+            <div class="section-divider"></div>
+            <p>
+                Fee details for major programs. Final fees may vary. 
+                Contact the admission office for complete details.
+            </p>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Program</th>
+                        <th>Duration</th>
+                        <th>Annual Fee (Approx.)</th>
+                        <th>Scholarship</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>B.Tech</strong></td>
+                        <td>4 Years</td>
+                        <td>₹80,000 – ₹1,00,000</td>
+                        <td><span class="badge badge-approved">Available</span></td>
+                        <td><a href="{% url 'admission_form' %}" class="btn btn-primary btn-sm">Apply</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>BCA</strong></td>
+                        <td>3 Years</td>
+                        <td>₹40,000 – ₹55,000</td>
+                        <td><span class="badge badge-approved">Available</span></td>
+                        <td><a href="{% url 'admission_form' %}" class="btn btn-primary btn-sm">Apply</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>BBA</strong></td>
+                        <td>3 Years</td>
+                        <td>₹35,000 – ₹50,000</td>
+                        <td><span class="badge badge-approved">Available</span></td>
+                        <td><a href="{% url 'admission_form' %}" class="btn btn-primary btn-sm">Apply</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>MBA</strong></td>
+                        <td>2 Years</td>
+                        <td>₹60,000 – ₹80,000</td>
+                        <td><span class="badge badge-approved">Available</span></td>
+                        <td><a href="{% url 'admission_form' %}" class="btn btn-primary btn-sm">Apply</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>M.Tech</strong></td>
+                        <td>2 Years</td>
+                        <td>₹70,000 – ₹90,000</td>
+                        <td><span class="badge badge-pending">Limited</span></td>
+                        <td><a href="{% url 'admission_form' %}" class="btn btn-primary btn-sm">Apply</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>B.Pharm</strong></td>
+                        <td>4 Years</td>
+                        <td>₹75,000 – ₹95,000</td>
+                        <td><span class="badge badge-approved">Available</span></td>
+                        <td><a href="{% url 'admission_form' %}" class="btn btn-primary btn-sm">Apply</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>B.Com</strong></td>
+                        <td>3 Years</td>
+                        <td>₹25,000 – ₹35,000</td>
+                        <td><span class="badge badge-approved">Available</span></td>
+                        <td><a href="{% url 'admission_form' %}" class="btn btn-primary btn-sm">Apply</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>B.Sc</strong></td>
+                        <td>3 Years</td>
+                        <td>₹25,000 – ₹40,000</td>
+                        <td><span class="badge badge-approved">Available</span></td>
+                        <td><a href="{% url 'admission_form' %}" class="btn btn-primary btn-sm">Apply</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p style="text-align:center; font-size:0.85rem; color:var(--text-light); margin-top:16px;">
+            * Scholarship available for merit students (70%+ in qualifying exam) and economically weaker sections.
+        </p>
+
+    </div>
+</section>
+
+{% endblock %}

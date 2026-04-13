@@ -1,0 +1,260 @@
+{% extends 'admission/base.html' %}
+
+{% block title %}Apply for Admission — RKDF University Ranchi{% endblock %}
+
+{% block content %}
+
+<div class="form-page">
+    <div class="container">
+
+        <!-- ============================================================
+             ADMISSION FORM CARD
+             ============================================================ -->
+        <div class="form-container">
+
+            <!-- Form Header -->
+            <div class="form-header">
+                <div style="font-size:2.5rem; margin-bottom:12px;">📝</div>
+                <h2>Admission Application Form</h2>
+                <p>RKDF University Ranchi — Academic Year 2024–25</p>
+            </div>
+
+            <!-- Django Messages (success/error alerts from backend) -->
+            <div id="formAlerts">
+                {% if messages %}
+                <div style="padding:16px 48px 0;">
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        <span>{% if message.tags == 'success' %}✅{% else %}⚠️{% endif %}</span>
+                        <span>{{ message }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Form Body -->
+            <div class="form-body">
+
+                <!-- 
+                    IMPORTANT:
+                    - method="post" sends data to the server
+                    - action="" sends it to the same URL (the view handles both GET and POST)
+                    - {% csrf_token %} is a SECURITY requirement in Django (prevents CSRF attacks)
+                -->
+                <form id="admissionForm" method="post" action="">
+                    {% csrf_token %}
+
+                    <!-- --------------------------------
+                         SECTION 1: Personal Information
+                         -------------------------------- -->
+                    <div class="form-section-title">
+                        👤 Personal Information
+                    </div>
+
+                    <div class="form-grid">
+
+                        <!-- Full Name -->
+                        <div class="form-group">
+                            <label for="name">Full Name <span class="required">*</span></label>
+                            <input
+                                type="text"
+                                id="name"
+                                name="name"
+                                placeholder="Enter your full name"
+                                value="{{ submitted_data.name|default:'' }}"
+                                autocomplete="name"
+                            >
+                            <!-- Error message shown by JavaScript -->
+                            <span id="name_error" class="field-error"></span>
+                        </div>
+
+                        <!-- Father's Name -->
+                        <div class="form-group">
+                            <label for="father_name">Father's Name <span class="required">*</span></label>
+                            <input
+                                type="text"
+                                id="father_name"
+                                name="father_name"
+                                placeholder="Enter father's full name"
+                                value="{{ submitted_data.father_name|default:'' }}"
+                            >
+                            <span id="father_name_error" class="field-error"></span>
+                        </div>
+
+                        <!-- Date of Birth -->
+                        <div class="form-group">
+                            <label for="date_of_birth">Date of Birth <span class="required">*</span></label>
+                            <input
+                                type="date"
+                                id="date_of_birth"
+                                name="date_of_birth"
+                                value="{{ submitted_data.date_of_birth|default:'' }}"
+                                max="2008-12-31"
+                            >
+                            <span id="date_of_birth_error" class="field-error"></span>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="form-group">
+                            <label for="email">Email Address <span class="required">*</span></label>
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                placeholder="yourname@example.com"
+                                value="{{ submitted_data.email|default:'' }}"
+                                autocomplete="email"
+                            >
+                            <span id="email_error" class="field-error"></span>
+                        </div>
+
+                        <!-- Phone -->
+                        <div class="form-group">
+                            <label for="phone">Phone Number <span class="required">*</span></label>
+                            <input
+                                type="tel"
+                                id="phone"
+                                name="phone"
+                                placeholder="10-digit mobile number"
+                                value="{{ submitted_data.phone|default:'' }}"
+                                maxlength="10"
+                                autocomplete="tel"
+                            >
+                            <span id="phone_error" class="field-error"></span>
+                        </div>
+
+                        <!-- Course Selection -->
+                        <div class="form-group">
+                            <label for="course">Course Applied For <span class="required">*</span></label>
+                            <select id="course" name="course">
+                                <option value="">-- Select a Course --</option>
+                                {% for code, name in course_choices %}
+                                <option value="{{ code }}"
+                                    {% if submitted_data.course == code %}selected{% endif %}
+                                    {% if request.GET.course == code %}selected{% endif %}
+                                >
+                                    {{ name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <span id="course_error" class="field-error"></span>
+                        </div>
+
+                        <!-- Address (full width) -->
+                        <div class="form-group full-width">
+                            <label for="address">Residential Address <span class="required">*</span></label>
+                            <textarea
+                                id="address"
+                                name="address"
+                                placeholder="Enter your full residential address (house no., street, city, state, PIN)"
+                                rows="3"
+                            >{{ submitted_data.address|default:'' }}</textarea>
+                            <span id="address_error" class="field-error"></span>
+                        </div>
+
+                    </div>
+
+
+                    <!-- --------------------------------
+                         SECTION 2: Academic Details
+                         -------------------------------- -->
+                    <div class="form-section-title">
+                        📚 Academic Information
+                    </div>
+
+                    <div class="form-grid">
+
+                        <!-- 10th Percentage -->
+                        <div class="form-group">
+                            <label for="tenth_percentage">10th Percentage</label>
+                            <input
+                                type="number"
+                                id="tenth_percentage"
+                                name="tenth_percentage"
+                                placeholder="e.g., 75.50"
+                                value="{{ submitted_data.tenth_percentage|default:'' }}"
+                                min="0"
+                                max="100"
+                                step="0.01"
+                            >
+                            <span id="tenth_percentage_error" class="field-error"></span>
+                        </div>
+
+                        <!-- 12th Percentage -->
+                        <div class="form-group">
+                            <label for="twelfth_percentage">12th Percentage</label>
+                            <input
+                                type="number"
+                                id="twelfth_percentage"
+                                name="twelfth_percentage"
+                                placeholder="e.g., 68.25"
+                                value="{{ submitted_data.twelfth_percentage|default:'' }}"
+                                min="0"
+                                max="100"
+                                step="0.01"
+                            >
+                            <span id="twelfth_percentage_error" class="field-error"></span>
+                        </div>
+
+                    </div>
+
+
+                    <!-- --------------------------------
+                         Declaration Checkbox
+                         -------------------------------- -->
+                    <div style="margin-top:28px; padding:20px; background:var(--gold-pale); border-radius:var(--radius-sm); border:1px solid rgba(201,152,42,0.3);">
+                        <label style="display:flex; gap:12px; align-items:flex-start; cursor:pointer; font-weight:normal;">
+                            <input type="checkbox" id="declaration" name="declaration" required
+                                style="width:18px; height:18px; margin-top:3px; flex-shrink:0; accent-color:var(--navy);">
+                            <span style="font-size:0.875rem; color:var(--text-dark);">
+                                I hereby declare that all the information provided in this application form is 
+                                true and correct to the best of my knowledge. I understand that any false 
+                                information will lead to cancellation of my admission.
+                                <span class="required">*</span>
+                            </span>
+                        </label>
+                    </div>
+
+
+                    <!-- --------------------------------
+                         Submit Button
+                         -------------------------------- -->
+                    <div class="form-submit">
+                        <button type="submit" class="btn btn-primary btn-lg" style="min-width:240px;">
+                            🚀 Submit Application
+                        </button>
+                        <p style="margin-top:12px; font-size:0.8rem; color:var(--text-light);">
+                            Fields marked with <span style="color:#e53e3e;">*</span> are required.
+                        </p>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+        <!-- Tips Box -->
+        <div style="max-width:820px; margin:24px auto 0; background:var(--navy); border-radius:var(--radius-md); padding:24px 32px; color:white;">
+            <h4 style="color:var(--gold-light); margin-bottom:16px; font-size:0.9rem; text-transform:uppercase; letter-spacing:0.5px;">
+                💡 Before You Submit
+            </h4>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                <div style="display:flex; gap:8px; align-items:flex-start; font-size:0.875rem; color:rgba(255,255,255,0.75);">
+                    <span>✓</span> Keep your 10th and 12th marksheets handy
+                </div>
+                <div style="display:flex; gap:8px; align-items:flex-start; font-size:0.875rem; color:rgba(255,255,255,0.75);">
+                    <span>✓</span> Use a valid and active email address
+                </div>
+                <div style="display:flex; gap:8px; align-items:flex-start; font-size:0.875rem; color:rgba(255,255,255,0.75);">
+                    <span>✓</span> Double-check your phone number
+                </div>
+                <div style="display:flex; gap:8px; align-items:flex-start; font-size:0.875rem; color:rgba(255,255,255,0.75);">
+                    <span>✓</span> Note down your Application ID after submission
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

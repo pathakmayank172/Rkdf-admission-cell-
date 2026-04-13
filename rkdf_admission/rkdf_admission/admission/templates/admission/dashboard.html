@@ -1,0 +1,267 @@
+{% extends 'admission/base.html' %}
+
+{% block title %}Student Dashboard — RKDF University Ranchi{% endblock %}
+
+{% block content %}
+
+<!-- Dashboard Header -->
+<div class="dashboard-header">
+    <div class="container">
+        <h1 style="color:white; margin-bottom:8px;">📊 Admission Dashboard</h1>
+        <p style="color:rgba(255,255,255,0.7);">MIS View — All Admission Applications | RKDF University Ranchi</p>
+    </div>
+</div>
+
+<div class="dashboard-page" style="padding-top:0;">
+    <div class="container">
+
+        <!-- ============================================================
+             STATISTICS SUMMARY CARDS
+             ============================================================ -->
+        <div class="stats-grid">
+
+            <!-- Total Applications -->
+            <div class="stat-card">
+                <div class="stat-icon blue">📋</div>
+                <div class="stat-info">
+                    <h3>{{ total }}</h3>
+                    <p>Total Applications</p>
+                </div>
+            </div>
+
+            <!-- Pending -->
+            <div class="stat-card">
+                <div class="stat-icon yellow">⏳</div>
+                <div class="stat-info">
+                    <h3>{{ pending_count }}</h3>
+                    <p>Pending Review</p>
+                </div>
+            </div>
+
+            <!-- Approved -->
+            <div class="stat-card">
+                <div class="stat-icon green">✅</div>
+                <div class="stat-info">
+                    <h3>{{ approved_count }}</h3>
+                    <p>Approved</p>
+                </div>
+            </div>
+
+            <!-- Rejected -->
+            <div class="stat-card">
+                <div class="stat-icon red">❌</div>
+                <div class="stat-info">
+                    <h3>{{ rejected_count }}</h3>
+                    <p>Rejected</p>
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- ============================================================
+             COURSE-WISE BREAKDOWN
+             ============================================================ -->
+        {% if course_stats %}
+        <div style="background:white; border-radius:var(--radius-md); padding:24px; border:1px solid var(--border); margin-bottom:24px; box-shadow:var(--shadow-sm);">
+            <h3 style="margin-bottom:20px; font-size:1rem; color:var(--navy);">📈 Course-wise Applications</h3>
+            <div style="display:flex; flex-wrap:wrap; gap:12px;">
+                {% for cs in course_stats %}
+                <div style="background:var(--off-white); border:1px solid var(--border); border-radius:8px; padding:12px 20px; min-width:140px; text-align:center;">
+                    <div style="font-family:var(--font-heading); font-size:1.6rem; color:var(--navy); font-weight:700;">{{ cs.count }}</div>
+                    <div style="font-size:0.8rem; color:var(--text-light); text-transform:uppercase; letter-spacing:0.5px;">{{ cs.course }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+
+        <!-- ============================================================
+             FILTER BAR
+             ============================================================ -->
+        <div class="filter-bar">
+            <!-- 
+                This form uses GET method — filters are added to the URL
+                e.g., /dashboard/?course=BCA&status=pending
+            -->
+            <form method="GET" action="{% url 'dashboard' %}" style="display:flex; gap:16px; flex-wrap:wrap; flex:1; align-items:flex-end;">
+
+                <!-- Search -->
+                <div class="form-group" style="flex:2; min-width:200px;">
+                    <label>🔍 Search by Name / Email</label>
+                    <input type="text" id="tableSearch" placeholder="Type to search table..." 
+                           style="padding:10px 14px; border:2px solid var(--border); border-radius:6px; font-family:var(--font-body); outline:none; width:100%;">
+                </div>
+
+                <!-- Filter by Course -->
+                <div class="form-group" style="flex:1; min-width:160px;">
+                    <label>📚 Filter by Course</label>
+                    <select name="course" style="padding:10px 14px; border:2px solid var(--border); border-radius:6px; font-family:var(--font-body); background:white; width:100%;">
+                        <option value="">All Courses</option>
+                        {% for code, name in course_choices %}
+                        <option value="{{ code }}" {% if filter_course == code %}selected{% endif %}>
+                            {{ code }} — {{ name|truncatechars:20 }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Filter by Status -->
+                <div class="form-group" style="flex:1; min-width:150px;">
+                    <label>🔖 Filter by Status</label>
+                    <select name="status" style="padding:10px 14px; border:2px solid var(--border); border-radius:6px; font-family:var(--font-body); background:white; width:100%;">
+                        <option value="">All Statuses</option>
+                        <option value="pending"  {% if filter_status == 'pending'  %}selected{% endif %}>⏳ Pending</option>
+                        <option value="approved" {% if filter_status == 'approved' %}selected{% endif %}>✅ Approved</option>
+                        <option value="rejected" {% if filter_status == 'rejected' %}selected{% endif %}>❌ Rejected</option>
+                    </select>
+                </div>
+
+                <!-- Buttons -->
+                <div style="display:flex; gap:8px; align-items:flex-end;">
+                    <button type="submit" class="btn btn-navy">Apply Filter</button>
+                    <a href="{% url 'dashboard' %}" class="btn btn-outline" style="color:var(--navy); border-color:var(--border);">Clear</a>
+                </div>
+
+            </form>
+
+            <!-- Print Button -->
+            <button onclick="printDashboard()" class="btn btn-primary btn-sm" style="align-self:flex-end;">
+                🖨️ Print
+            </button>
+        </div>
+
+
+        <!-- ============================================================
+             APPLICATIONS TABLE
+             ============================================================ -->
+        <div class="table-container">
+
+            <div class="table-header">
+                <h3>
+                    Admission Applications
+                    {% if filter_course or filter_status %}
+                        — Filtered Results
+                    {% endif %}
+                </h3>
+                <span style="font-size:0.85rem; color:var(--text-light);">
+                    Showing {{ admissions|length }} record{{ admissions|length|pluralize }}
+                </span>
+            </div>
+
+            <!-- Table -->
+            <div style="overflow-x:auto;">
+                <table id="admissionTable">
+                    <thead>
+                        <tr>
+                            <th>#ID</th>
+                            <th>Student Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Course</th>
+                            <th>10th %</th>
+                            <th>12th %</th>
+                            <th>Submitted On</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        {% for admission in admissions %}
+                        <tr>
+                            <!-- Application ID -->
+                            <td><span class="app-id">#{{ admission.id }}</span></td>
+
+                            <!-- Student Name & Father -->
+                            <td>
+                                <strong style="color:var(--text-dark);">{{ admission.name }}</strong>
+                                {% if admission.father_name %}
+                                <br><small style="color:var(--text-light);">F: {{ admission.father_name }}</small>
+                                {% endif %}
+                            </td>
+
+                            <!-- Email -->
+                            <td style="font-size:0.85rem;">{{ admission.email }}</td>
+
+                            <!-- Phone -->
+                            <td>{{ admission.phone }}</td>
+
+                            <!-- Course -->
+                            <td>
+                                <span style="font-weight:600; color:var(--navy);">{{ admission.course }}</span>
+                                <br><small style="color:var(--text-light); font-size:0.75rem;">{{ admission.get_course_display }}</small>
+                            </td>
+
+                            <!-- 10th % -->
+                            <td>
+                                {% if admission.tenth_percentage %}
+                                    {{ admission.tenth_percentage }}%
+                                {% else %}
+                                    <span style="color:var(--text-light);">—</span>
+                                {% endif %}
+                            </td>
+
+                            <!-- 12th % -->
+                            <td>
+                                {% if admission.twelfth_percentage %}
+                                    {{ admission.twelfth_percentage }}%
+                                {% else %}
+                                    <span style="color:var(--text-light);">—</span>
+                                {% endif %}
+                            </td>
+
+                            <!-- Submission Date -->
+                            <td style="font-size:0.85rem; white-space:nowrap;">
+                                {{ admission.submitted_at|date:"d M Y" }}
+                                <br><small style="color:var(--text-light);">{{ admission.submitted_at|time:"h:i A" }}</small>
+                            </td>
+
+                            <!-- Status Badge -->
+                            <td>
+                                <span class="badge badge-{{ admission.status }}">
+                                    {% if admission.status == 'pending' %}⏳{% elif admission.status == 'approved' %}✅{% else %}❌{% endif %}
+                                    {{ admission.status|capfirst }}
+                                </span>
+                            </td>
+                        </tr>
+
+                        {% empty %}
+                        <!-- No records found -->
+                        <tr>
+                            <td colspan="9" class="no-records">
+                                <div class="no-records-icon">📭</div>
+                                <h3 style="color:var(--text-mid); margin-bottom:8px;">No Applications Found</h3>
+                                <p style="margin-bottom:20px;">
+                                    {% if filter_course or filter_status %}
+                                        No applications match your current filters.
+                                        <a href="{% url 'dashboard' %}" style="color:var(--navy);">Clear filters</a>
+                                    {% else %}
+                                        No admission applications have been submitted yet.
+                                    {% endif %}
+                                </p>
+                                <a href="{% url 'admission_form' %}" class="btn btn-primary">
+                                    📝 Submit First Application
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+        <!-- Admin link -->
+        <div style="text-align:center; margin-top:24px; padding:16px; background:var(--gold-pale); border-radius:var(--radius-sm); border:1px solid rgba(201,152,42,0.3);">
+            <p style="margin:0; font-size:0.875rem; color:var(--text-dark);">
+                🔐 <strong>Admins:</strong> To update application status, use the 
+                <a href="/admin/" style="color:var(--navy); font-weight:600;">Django Admin Panel</a>
+            </p>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

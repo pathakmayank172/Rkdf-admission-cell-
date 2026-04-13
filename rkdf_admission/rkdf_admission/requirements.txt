@@ -1,0 +1,4 @@
+# Requirements for RKDF University Admission Cell Django Project
+# Install all dependencies with: pip install -r requirements.txt
+
+Django>=4.2,<5.0

@@ -1,0 +1,314 @@
+{% extends 'admission/base.html' %}
+{% load static %}
+
+{% block title %}RKDF University Ranchi — Admission Cell{% endblock %}
+
+{% block content %}
+
+<!-- ============================================================
+     HERO SECTION
+     ============================================================ -->
+<section class="hero">
+    <!-- Decorative circles (CSS animated) -->
+    <div class="hero-decor hero-decor-1"></div>
+    <div class="hero-decor hero-decor-2"></div>
+    <div class="hero-decor hero-decor-3"></div>
+
+    <div class="container hero-content">
+
+        <!-- Badge -->
+        <div class="hero-badge">
+            🎓 Admissions Open 2024–25
+        </div>
+
+        <!-- Main Heading -->
+        <h1>
+            Welcome to
+            <span>RKDF University Ranchi</span>
+        </h1>
+
+        <!-- Subtitle -->
+        <p class="hero-subtitle">
+            Unlock your potential with world-class education. 
+            Apply for BCA, BBA, MBA, B.Tech and 10+ programs.
+            Shape your future with us.
+        </p>
+
+        <!-- Call-to-Action Buttons -->
+        <div class="hero-actions">
+            <a href="{% url 'admission_form' %}" class="btn btn-primary btn-lg">
+                📝 Apply for Admission
+            </a>
+            <a href="{% url 'courses' %}" class="btn btn-outline btn-lg">
+                📚 Explore Courses
+            </a>
+        </div>
+
+        <!-- Key Stats -->
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <span class="hero-stat-number" data-counter="5000" data-suffix="+">0</span>
+                <span class="hero-stat-label">Students Enrolled</span>
+            </div>
+            <div class="hero-stat">
+                <span class="hero-stat-number" data-counter="30" data-suffix="+">0</span>
+                <span class="hero-stat-label">Programs</span>
+            </div>
+            <div class="hero-stat">
+                <span class="hero-stat-number" data-counter="200" data-suffix="+">0</span>
+                <span class="hero-stat-label">Faculty Members</span>
+            </div>
+            <div class="hero-stat">
+                <span class="hero-stat-number" data-counter="95" data-suffix="%">0</span>
+                <span class="hero-stat-label">Placement Rate</span>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- ============================================================
+     HIGHLIGHTS SECTION (Why Choose Us)
+     ============================================================ -->
+<section class="section highlights-section">
+    <div class="container">
+
+        <div class="section-header">
+            <h2>Why Choose RKDF University?</h2>
+            <div class="section-divider"></div>
+            <p>We are committed to academic excellence, innovation, and student success in every field.</p>
+        </div>
+
+        <div class="card-grid">
+
+            <div class="card">
+                <div class="card-icon">🏆</div>
+                <h4>NAAC Accredited</h4>
+                <p>
+                    Recognized by UGC and accredited by NAAC for maintaining
+                    high standards of education and infrastructure.
+                </p>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">🔬</div>
+                <h4>Research & Innovation</h4>
+                <p>
+                    State-of-the-art laboratories, research centers, and
+                    innovation hubs to foster scientific thinking.
+                </p>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">💼</div>
+                <h4>100% Placement Support</h4>
+                <p>
+                    Dedicated placement cell with 200+ industry partners
+                    ensuring career opportunities for all graduates.
+                </p>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">🌐</div>
+                <h4>Industry Connections</h4>
+                <p>
+                    MOUs with leading companies, regular industry visits,
+                    internship programs and expert guest lectures.
+                </p>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">🎯</div>
+                <h4>Skill Development</h4>
+                <p>
+                    Mandatory skill development programs, workshops and
+                    certification courses alongside regular curriculum.
+                </p>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">🏫</div>
+                <h4>Modern Infrastructure</h4>
+                <p>
+                    Modern campus with smart classrooms, digital library,
+                    sports facilities, hostel and transport services.
+                </p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- ============================================================
+     ADMISSION PROCESS SECTION
+     ============================================================ -->
+<section class="section" style="background: var(--navy);">
+    <div class="container">
+
+        <div class="section-header">
+            <h2 class="text-white">Admission Process</h2>
+            <div class="section-divider"></div>
+            <p class="text-white" style="opacity:0.7;">Simple 4-step process to start your journey at RKDF University Ranchi</p>
+        </div>
+
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:24px;">
+
+            {% for step in steps_data %}
+            <div style="text-align:center; padding: 32px 20px; background: rgba(255,255,255,0.05); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                <div style="width:56px;height:56px;background:linear-gradient(135deg,var(--gold),var(--gold-light));border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-size:1.4rem;font-weight:700;color:var(--navy);margin:0 auto 16px;">
+                    {{ forloop.counter }}
+                </div>
+                <h4 style="color:white; margin-bottom:8px; font-size:1rem;">{{ step.title }}</h4>
+                <p style="color:rgba(255,255,255,0.6); font-size:0.875rem; margin:0;">{{ step.desc }}</p>
+            </div>
+            {% empty %}
+            <!-- Default steps if not passed from view -->
+            <div style="text-align:center; padding: 32px 20px; background: rgba(255,255,255,0.05); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                <div style="width:56px;height:56px;background:linear-gradient(135deg,var(--gold),var(--gold-light));border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-size:1.4rem;font-weight:700;color:var(--navy);margin:0 auto 16px;">1</div>
+                <h4 style="color:white; margin-bottom:8px;">Browse Courses</h4>
+                <p style="color:rgba(255,255,255,0.6); font-size:0.875rem; margin:0;">Explore all available programs and their eligibility requirements.</p>
+            </div>
+            <div style="text-align:center; padding: 32px 20px; background: rgba(255,255,255,0.05); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                <div style="width:56px;height:56px;background:linear-gradient(135deg,var(--gold),var(--gold-light));border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-size:1.4rem;font-weight:700;color:var(--navy);margin:0 auto 16px;">2</div>
+                <h4 style="color:white; margin-bottom:8px;">Fill Application</h4>
+                <p style="color:rgba(255,255,255,0.6); font-size:0.875rem; margin:0;">Complete the online admission form with your personal and academic details.</p>
+            </div>
+            <div style="text-align:center; padding: 32px 20px; background: rgba(255,255,255,0.05); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                <div style="width:56px;height:56px;background:linear-gradient(135deg,var(--gold),var(--gold-light));border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-size:1.4rem;font-weight:700;color:var(--navy);margin:0 auto 16px;">3</div>
+                <h4 style="color:white; margin-bottom:8px;">Document Verification</h4>
+                <p style="color:rgba(255,255,255,0.6); font-size:0.875rem; margin:0;">Submit required documents for verification by the admission committee.</p>
+            </div>
+            <div style="text-align:center; padding: 32px 20px; background: rgba(255,255,255,0.05); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                <div style="width:56px;height:56px;background:linear-gradient(135deg,var(--gold),var(--gold-light));border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-size:1.4rem;font-weight:700;color:var(--navy);margin:0 auto 16px;">4</div>
+                <h4 style="color:white; margin-bottom:8px;">Confirmation</h4>
+                <p style="color:rgba(255,255,255,0.6); font-size:0.875rem; margin:0;">Receive your admission confirmation and start your academic journey!</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div style="text-align:center; margin-top:48px;">
+            <a href="{% url 'admission_form' %}" class="btn btn-primary btn-lg">
+                Start Your Application →
+            </a>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- ============================================================
+     NOTICE BOARD
+     ============================================================ -->
+<section class="section" style="background: var(--off-white);">
+    <div class="container">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:40px; align-items:start;">
+
+            <!-- Important Dates -->
+            <div class="card" style="padding:0; overflow:hidden;">
+                <div style="background:var(--navy); padding:20px 24px;">
+                    <h3 style="color:var(--gold-light); font-size:1.1rem; margin:0;">📅 Important Dates 2024–25</h3>
+                </div>
+                <div style="padding:24px;">
+                    <table style="width:100%; border-collapse:collapse;">
+                        <thead>
+                            <tr style="background:var(--off-white);">
+                                <th style="padding:10px 12px; text-align:left; font-size:0.8rem; color:var(--text-light); text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid var(--border);">Event</th>
+                                <th style="padding:10px 12px; text-align:left; font-size:0.8rem; color:var(--text-light); text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid var(--border);">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom:1px solid var(--border);">
+                                <td style="padding:12px; font-size:0.9rem; color:var(--text-dark);">Application Form Open</td>
+                                <td style="padding:12px; font-size:0.9rem; color:var(--gold); font-weight:600;">01 Jan 2024</td>
+                            </tr>
+                            <tr style="border-bottom:1px solid var(--border);">
+                                <td style="padding:12px; font-size:0.9rem; color:var(--text-dark);">Last Date to Apply</td>
+                                <td style="padding:12px; font-size:0.9rem; color:var(--gold); font-weight:600;">31 May 2024</td>
+                            </tr>
+                            <tr style="border-bottom:1px solid var(--border);">
+                                <td style="padding:12px; font-size:0.9rem; color:var(--text-dark);">Merit List Declaration</td>
+                                <td style="padding:12px; font-size:0.9rem; color:var(--gold); font-weight:600;">15 Jun 2024</td>
+                            </tr>
+                            <tr style="border-bottom:1px solid var(--border);">
+                                <td style="padding:12px; font-size:0.9rem; color:var(--text-dark);">Document Verification</td>
+                                <td style="padding:12px; font-size:0.9rem; color:var(--gold); font-weight:600;">20–25 Jun 2024</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:12px; font-size:0.9rem; color:var(--text-dark);">Session Commencement</td>
+                                <td style="padding:12px; font-size:0.9rem; color:var(--gold); font-weight:600;">01 Jul 2024</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Notices -->
+            <div class="card" style="padding:0; overflow:hidden;">
+                <div style="background:var(--navy); padding:20px 24px;">
+                    <h3 style="color:var(--gold-light); font-size:1.1rem; margin:0;">📢 Latest Notices</h3>
+                </div>
+                <div style="padding:24px;">
+                    {% for notice in notices %}
+                    <div style="padding:12px 0; border-bottom:1px solid var(--border); display:flex; gap:12px; align-items:flex-start;">
+                        <span style="font-size:1.2rem; flex-shrink:0;">{{ notice.icon }}</span>
+                        <div>
+                            <p style="margin:0 0 4px; font-size:0.9rem; color:var(--text-dark); font-weight:500;">{{ notice.text }}</p>
+                            <small style="color:var(--text-light); font-size:0.78rem;">{{ notice.date }}</small>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div style="padding:12px 0; border-bottom:1px solid var(--border); display:flex; gap:12px;">
+                        <span>📋</span>
+                        <div>
+                            <p style="margin:0 0 4px; font-size:0.9rem; color:var(--text-dark); font-weight:500;">Online admission forms for 2024–25 batch are now open.</p>
+                            <small style="color:var(--text-light); font-size:0.78rem;">01 Jan 2024</small>
+                        </div>
+                    </div>
+                    <div style="padding:12px 0; border-bottom:1px solid var(--border); display:flex; gap:12px;">
+                        <span>🏆</span>
+                        <div>
+                            <p style="margin:0 0 4px; font-size:0.9rem; color:var(--text-dark); font-weight:500;">Scholarship available for meritorious students — Apply before 15 Mar.</p>
+                            <small style="color:var(--text-light); font-size:0.78rem;">10 Jan 2024</small>
+                        </div>
+                    </div>
+                    <div style="padding:12px 0; border-bottom:1px solid var(--border); display:flex; gap:12px;">
+                        <span>🔧</span>
+                        <div>
+                            <p style="margin:0 0 4px; font-size:0.9rem; color:var(--text-dark); font-weight:500;">New lab facilities inaugurated for B.Tech (CSE & ECE) students.</p>
+                            <small style="color:var(--text-light); font-size:0.78rem;">15 Jan 2024</small>
+                        </div>
+                    </div>
+                    <div style="padding:12px 0; display:flex; gap:12px;">
+                        <span>📝</span>
+                        <div>
+                            <p style="margin:0 0 4px; font-size:0.9rem; color:var(--text-dark); font-weight:500;">Entrance exam schedule for MBA lateral entry released.</p>
+                            <small style="color:var(--text-light); font-size:0.78rem;">20 Jan 2024</small>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- ============================================================
+     CTA BANNER
+     ============================================================ -->
+<section style="background:linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%); padding:60px 0;">
+    <div class="container" style="text-align:center;">
+        <h2 style="color:var(--navy); margin-bottom:12px;">Ready to Begin Your Academic Journey?</h2>
+        <p style="color:rgba(10,22,40,0.7); font-size:1.1rem; margin-bottom:32px; max-width:520px; margin-left:auto; margin-right:auto;">
+            Join thousands of students who have built successful careers starting from RKDF University Ranchi.
+        </p>
+        <a href="{% url 'admission_form' %}" class="btn btn-navy btn-lg">
+            Apply Now — It's Free!
+        </a>
+    </div>
+</section>
+
+{% endblock %}

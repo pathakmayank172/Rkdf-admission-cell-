@@ -1,0 +1,240 @@
+{% extends 'admission/base.html' %}
+
+{% block title %}Contact Us — RKDF University Ranchi{% endblock %}
+
+{% block content %}
+
+<!-- Page Hero -->
+<section class="page-hero">
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="{% url 'home' %}">Home</a>
+            <span>/</span>
+            <span>Contact</span>
+        </div>
+        <h1>Contact Us</h1>
+        <p>We're here to help. Reach out to the Admission Cell for any queries.</p>
+    </div>
+</section>
+
+
+<!-- Contact Section -->
+<section class="section">
+    <div class="container">
+
+        <div class="contact-grid">
+
+            <!-- ====================================
+                 Left: Contact Information
+                 ==================================== -->
+            <div class="contact-info-card">
+
+                <h3>Get in Touch</h3>
+                <p style="color:rgba(255,255,255,0.65); font-size:0.9rem; margin-bottom:32px;">
+                    Our admission team is available Monday to Saturday to help you 
+                    with your application queries.
+                </p>
+
+                <!-- Address -->
+                <div class="contact-item">
+                    <div class="contact-item-icon">📍</div>
+                    <div class="contact-item-text">
+                        <p>Address</p>
+                        <strong>RKDF University, Namkum, Ranchi, Jharkhand - 834010</strong>
+                    </div>
+                </div>
+
+                <!-- Phone -->
+                <div class="contact-item">
+                    <div class="contact-item-icon">📞</div>
+                    <div class="contact-item-text">
+                        <p>Phone</p>
+                        <strong>+91 9876543210 | +91 9876543211</strong>
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="contact-item">
+                    <div class="contact-item-icon">✉️</div>
+                    <div class="contact-item-text">
+                        <p>Email</p>
+                        <strong>admission@rkdfuniversityranchi.ac.in</strong>
+                    </div>
+                </div>
+
+                <!-- Website -->
+                <div class="contact-item">
+                    <div class="contact-item-icon">🌐</div>
+                    <div class="contact-item-text">
+                        <p>Website</p>
+                        <strong>www.rkdfuniversityranchi.ac.in</strong>
+                    </div>
+                </div>
+
+                <!-- Timings -->
+                <div class="contact-item">
+                    <div class="contact-item-icon">🕒</div>
+                    <div class="contact-item-text">
+                        <p>Office Hours</p>
+                        <strong>Monday – Saturday: 9:00 AM – 5:00 PM</strong>
+                    </div>
+                </div>
+
+                <!-- Divider -->
+                <div style="border-top:1px solid rgba(255,255,255,0.1); margin:24px 0;"></div>
+
+                <!-- Quick Actions -->
+                <h4 style="color:var(--gold-light); font-size:0.85rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:16px;">Quick Actions</h4>
+                <a href="{% url 'admission_form' %}" class="btn btn-primary" style="margin-bottom:10px; width:100%; justify-content:center;">
+                    📝 Apply for Admission
+                </a>
+                <a href="{% url 'courses' %}" class="btn btn-outline" style="width:100%; justify-content:center;">
+                    📚 View All Courses
+                </a>
+
+            </div>
+
+
+            <!-- ====================================
+                 Right: Contact Form
+                 ==================================== -->
+            <div class="contact-form-card">
+
+                <h3 style="margin-bottom:8px;">Send Us a Message</h3>
+                <p style="font-size:0.875rem; margin-bottom:28px;">
+                    Fill in the form and our team will get back to you within 24 hours.
+                </p>
+
+                <form id="contactForm" method="post" action="{% url 'contact' %}">
+                    {% csrf_token %}
+
+                    <!-- Name -->
+                    <div class="form-group" style="margin-bottom:16px;">
+                        <label for="contact_name">Your Name <span class="required">*</span></label>
+                        <input type="text" id="contact_name" name="name" placeholder="Full Name" required>
+                        <span id="contact_name_error" class="field-error"></span>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="form-group" style="margin-bottom:16px;">
+                        <label for="contact_email">Email Address <span class="required">*</span></label>
+                        <input type="email" id="contact_email" name="email" placeholder="your@email.com" required>
+                        <span id="contact_email_error" class="field-error"></span>
+                    </div>
+
+                    <!-- Phone -->
+                    <div class="form-group" style="margin-bottom:16px;">
+                        <label for="contact_phone">Phone Number</label>
+                        <input type="tel" id="contact_phone" name="phone" placeholder="10-digit mobile number">
+                    </div>
+
+                    <!-- Subject -->
+                    <div class="form-group" style="margin-bottom:16px;">
+                        <label for="contact_subject">Subject</label>
+                        <select id="contact_subject" name="subject">
+                            <option value="">-- Select Subject --</option>
+                            <option value="admission">Admission Inquiry</option>
+                            <option value="courses">Course Information</option>
+                            <option value="fees">Fee Structure</option>
+                            <option value="scholarship">Scholarship</option>
+                            <option value="hostel">Hostel & Facilities</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <!-- Message -->
+                    <div class="form-group" style="margin-bottom:24px;">
+                        <label for="contact_message">Message <span class="required">*</span></label>
+                        <textarea id="contact_message" name="message" rows="5"
+                            placeholder="Type your message here..."></textarea>
+                        <span id="contact_message_error" class="field-error"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; padding:14px;">
+                        📨 Send Message
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+
+<!-- Map Section (placeholder) -->
+<section style="background:var(--navy); padding:60px 0;">
+    <div class="container">
+        <div class="section-header">
+            <h2 style="color:white;">Find Us</h2>
+            <div class="section-divider"></div>
+            <p style="color:rgba(255,255,255,0.6);">RKDF University, Namkum, Ranchi, Jharkhand</p>
+        </div>
+        <!-- Map Embed Placeholder -->
+        <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:var(--radius-md); height:300px; display:flex; align-items:center; justify-content:center; text-align:center;">
+            <div>
+                <div style="font-size:3rem; margin-bottom:16px;">📍</div>
+                <p style="color:rgba(255,255,255,0.7);">
+                    RKDF University, Namkum, Ranchi, Jharkhand – 834010<br>
+                    <small style="color:rgba(255,255,255,0.4);">
+                        <!-- To embed Google Maps: replace this with an iframe from maps.google.com -->
+                        [Embed Google Maps iframe here]
+                    </small>
+                </p>
+                <a href="https://maps.google.com/?q=Namkum+Ranchi+Jharkhand" 
+                   target="_blank" 
+                   class="btn btn-primary btn-sm" 
+                   style="margin-top:16px;">
+                    🗺️ Open in Google Maps
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- FAQ Section -->
+<section class="section" style="background:var(--off-white);">
+    <div class="container" style="max-width:800px;">
+        <div class="section-header">
+            <h2>Frequently Asked Questions</h2>
+            <div class="section-divider"></div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:16px;">
+
+            {% for faq in faqs %}
+            <div class="card" style="padding:24px;">
+                <h4 style="margin-bottom:8px; font-size:1rem;">{{ faq.q }}</h4>
+                <p style="margin:0; font-size:0.9rem;">{{ faq.a }}</p>
+            </div>
+            {% empty %}
+            <div class="card" style="padding:24px;">
+                <h4 style="margin-bottom:8px; font-size:1rem;">Q: When do admissions open?</h4>
+                <p style="margin:0; font-size:0.9rem;">Admissions for the 2024-25 academic year are open from January 1, 2024. The last date to apply is May 31, 2024.</p>
+            </div>
+            <div class="card" style="padding:24px;">
+                <h4 style="margin-bottom:8px; font-size:1rem;">Q: Is there an entrance exam?</h4>
+                <p style="margin:0; font-size:0.9rem;">Most programs admit students on the basis of merit. However, some programs like MBA may require an entrance test. Contact us for details.</p>
+            </div>
+            <div class="card" style="padding:24px;">
+                <h4 style="margin-bottom:8px; font-size:1rem;">Q: What documents are needed for admission?</h4>
+                <p style="margin:0; font-size:0.9rem;">10th & 12th mark sheets, transfer certificate, migration certificate, character certificate, Aadhaar card, passport-size photographs, and caste certificate (if applicable).</p>
+            </div>
+            <div class="card" style="padding:24px;">
+                <h4 style="margin-bottom:8px; font-size:1rem;">Q: Is scholarship available?</h4>
+                <p style="margin:0; font-size:0.9rem;">Yes! Merit scholarships are available for students with 70%+ marks in the qualifying exam. Government scholarships (SC/ST/OBC/EWS) are also applicable.</p>
+            </div>
+            <div class="card" style="padding:24px;">
+                <h4 style="margin-bottom:8px; font-size:1rem;">Q: Is hostel facility available?</h4>
+                <p style="margin:0; font-size:0.9rem;">Yes, separate hostels for boys and girls are available on campus with mess, Wi-Fi, and security. Hostel allocation is subject to availability.</p>
+            </div>
+            {% endfor %}
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}
