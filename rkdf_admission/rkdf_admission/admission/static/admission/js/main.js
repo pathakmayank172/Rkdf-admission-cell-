@@ -19,6 +19,8 @@ document.addEventListener('DOMContentLoaded', function () {
     initNavigation();
     initScrollTop();
     initAdmissionFormValidation();
+    initCourseRecommendation();
+    initChatbot();
     initContactFormValidation();
     initCounterAnimation();
     setActiveNavLink();
@@ -433,6 +435,184 @@ function initCounterAnimation() {
 // 9. DASHBOARD TABLE SEARCH
 // Client-side filtering of the table rows
 // ================================================================
+function initCourseRecommendation() {
+    var form = document.getElementById('recommendationForm');
+    var resultSection = document.getElementById('recommendationSection');
+    if (!form || !resultSection) return;
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        clearAllErrors();
+
+        var education = document.getElementById('education_level');
+        var stream = document.getElementById('stream');
+        var marks = document.getElementById('marks');
+        var budget = document.getElementById('budget');
+
+        var valid = true;
+
+        if (!education || education.value.trim() === '') {
+            showError('education_level', 'Please select your education level.');
+            valid = false;
+        }
+        if (!stream || stream.value.trim() === '') {
+            showError('stream', 'Please select your stream.');
+            valid = false;
+        }
+        if (!marks || marks.value.trim() === '' || isNaN(parseFloat(marks.value)) || parseFloat(marks.value) < 0 || parseFloat(marks.value) > 100) {
+            showError('marks', 'Please enter a valid percentage between 0 and 100.');
+            valid = false;
+        }
+        if (!budget || budget.value.trim() === '') {
+            showError('budget', 'Please choose a budget range.');
+            valid = false;
+        }
+
+        if (!valid) {
+            showFormAlert('Please fix the highlighted fields and try again.', 'error');
+            return;
+        }
+
+        resultSection.innerHTML = '<div class="recommendation-loading">⏳ Generating your personalized course recommendations...</div>';
+
+        var formData = new FormData(form);
+
+        fetch(form.action || window.location.pathname, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(function (response) {
+            if (!response.ok) {
+                throw new Error('Server error');
+            }
+            return response.json();
+        })
+        .then(function (data) {
+            if (data.no_match) {
+                resultSection.innerHTML = renderNoMatch(data);
+            } else {
+                resultSection.innerHTML = renderRecommendations(data.recommendations);
+            }
+            resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        })
+        .catch(function () {
+            resultSection.innerHTML = '<div class="recommendation-error">Unable to load recommendations right now. Please try again.</div>';
+        });
+    });
+}
+
+function renderRecommendations(recommendations) {
+    if (!recommendations || recommendations.length === 0) {
+        return '<div class="recommendation-error">No recommendations were found.</div>';
+    }
+
+    var html = '<div style="text-align: center; margin-bottom: 40px;"><h2>✅ Best Course Matches</h2><p>These courses fit your profile and budget.</p></div>';
+    recommendations.forEach(function (item, index) {
+        var rankLabel = index === 0 ? '🥇 Rank #1 - Best Match' : index === 1 ? '🥈 Rank #2 - Strong Match' : '🥉 Rank #3 - Good Match';
+        html += '<div class="course-card" style="margin-bottom: 30px; padding: 24px; border: 2px solid #e8f0f7; border-radius: 12px; background: linear-gradient(135deg, #f8fbff 0%, #f0f8ff 100%);">';
+        html += '<div style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 6px 12px; border-radius: 20px; font-weight: bold; margin-bottom: 12px;">' + rankLabel + '</div>';
+        html += '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">';
+        html += '<div><h3 style="margin: 0 0 8px 0; color: #333;">' + item.name + '</h3>';
+        html += '<p style="margin: 0 0 12px 0; color: #666; font-size: 14px;">' + item.full_name + '</p>';
+        html += '<div style="background: white; padding: 12px; border-radius: 8px; margin-bottom: 12px;">';
+        html += '<p style="margin: 0; font-size: 14px; line-height: 1.6;"><strong>Duration:</strong> ' + item.duration + '<br>';
+        html += '<strong>Seats:</strong> ' + item.seats + '<br>';
+        html += '<strong>Eligibility:</strong> ' + item.eligibility + '<br>';
+        html += '<strong>Annual Fee:</strong> ₹' + Math.round(item.annual_fee) + '<br>';
+        html += '<strong>Total Fee:</strong> ₹' + Math.round(item.total_fee) + '</p></div>';
+        html += '<p style="margin: 0; color: #555; font-size: 14px; line-height: 1.6;"><strong>About:</strong> ' + item.description + '</p></div>';
+        html += '<div><h4 style="color: #667eea; margin-top: 0;">Why It Suits You</h4>';
+        html += '<div style="background: white; padding: 12px; border-radius: 8px; margin-bottom: 12px;"><ul style="margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.8;">';
+        item.reasons.forEach(function (reason) {
+            html += '<li style="margin-bottom: 6px;">✓ ' + reason + '</li>';
+        });
+        html += '</ul></div>';
+        html += '<h4 style="color: #667eea;">Career Opportunities</h4>';
+        html += '<p style="margin: 0; color: #555; font-size: 14px; line-height: 1.6;">' + item.career_opportunities + '</p>';
+        html += '<h4 style="color: #667eea; margin-top: 12px;">Expected Salary</h4>';
+        html += '<div style="background: #d4e8f0; padding: 10px; border-radius: 6px; font-weight: bold; color: #333; font-size: 14px;">💰 ' + item.average_salary + '</div>';
+        html += '<div style="margin-top: 16px;"><a href="' + item.apply_url + '" class="btn btn-primary" style="display: inline-block; padding: 10px 20px; background: #667eea; color: white; text-decoration: none; border-radius: 6px; font-size: 14px; text-align: center;">Apply for ' + item.name + '</a></div>';
+        html += '</div></div></div>';
+    });
+    return html;
+}
+
+function renderNoMatch(data) {
+    var html = '<div class="alert alert-warning" style="max-width: 700px; margin: 40px auto; padding: 24px; border-radius: 12px;">';
+    html += '<div style="font-size: 2rem; margin-bottom: 12px;">⚠️</div>';
+    html += '<h3 style="margin: 0 0 12px 0;">No Matching Courses Found</h3>';
+    html += '<p style="margin: 0 0 16px 0;">' + (data.message || 'No recommendations available.') + '</p>';
+    if (data.suggestions && data.suggestions.length) {
+        html += '<ul style="margin: 0; padding-left: 20px;">';
+        data.suggestions.forEach(function (suggestion) {
+            html += '<li style="margin-bottom: 8px;">' + suggestion + '</li>';
+        });
+        html += '</ul>';
+    }
+    html += '<div style="margin-top: 20px;"><p style="margin: 0; color: #666; font-size: 14px;">📞 Contact our admission team for personalized guidance: <strong>admissions@rkdf.ac.in</strong></p></div>';
+    html += '</div>';
+    return html;
+}
+
+function initChatbot() {
+    var messagesContainer = document.getElementById('chatbotMessages');
+    var input = document.getElementById('chatInput');
+    var sendButton = document.getElementById('chatSend');
+    if (!messagesContainer || !input || !sendButton) return;
+
+    function addMessage(text, sender) {
+        var message = document.createElement('div');
+        message.className = 'chatbot-message ' + sender;
+        message.textContent = text;
+        messagesContainer.appendChild(message);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    function getBotResponse(query) {
+        var normalized = query.toLowerCase();
+        if (normalized.includes('eligibility') || normalized.includes('percentage')) {
+            return 'Eligibility depends on the selected course. Generally 10+2 with 45-50% is enough for most undergraduate courses, while postgraduate programs need graduation with 50% or more.';
+        }
+        if (normalized.includes('budget') || normalized.includes('fee')) {
+            return 'Annual fees vary by course: B.Com and B.Sc are usually more affordable, while B.Tech, M.Tech, and MBA have higher fees. Choose a course based on your budget range.';
+        }
+        if (normalized.includes('bca') || normalized.includes('computer')) {
+            return 'BCA is ideal if you enjoy programming, web apps, databases and IT careers. It is good for students from any stream with Maths at 10+2.';
+        }
+        if (normalized.includes('bba') || normalized.includes('business')) {
+            return 'BBA suits students interested in management, marketing, finance, or entrepreneurship. It is open to any stream with 45% or more in 10+2.';
+        }
+        if (normalized.includes('btech') || normalized.includes('engineering')) {
+            return 'B.Tech is best for PCM students with at least 50% in 10+2. It leads to engineering and technology careers in CSE, ECE, ME and other branches.';
+        }
+        if (normalized.includes('mba')) {
+            return 'MBA requires graduation in any stream with 50% or higher. It helps build leadership, marketing, finance, and HR careers.';
+        }
+        return 'I can help you with courses, eligibility, fees, and admission steps. Try asking “Which course suits my stream?” or “What is the eligibility for BCA?”.';
+    }
+
+    function sendChat() {
+        var text = input.value.trim();
+        if (!text) return;
+        addMessage(text, 'user');
+        input.value = '';
+        setTimeout(function () {
+            addMessage(getBotResponse(text), 'bot');
+        }, 300);
+    }
+
+    sendButton.addEventListener('click', sendChat);
+    input.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            sendChat();
+        }
+    });
+}
+
 function initTableSearch() {
     var searchInput = document.getElementById('tableSearch');
     if (!searchInput) return;

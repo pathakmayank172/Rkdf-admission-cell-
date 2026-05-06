@@ -118,8 +118,11 @@
         </div>
 
         <!-- ============================================================
-             RECOMMENDATIONS RESULTS
+             DYNAMIC RECOMMENDATION RESULTS
              ============================================================ -->
+        <div id="recommendationSection" style="margin-top: 60px;"></div>
+
+        <!-- Server-rendered fallback (non-JS users) -->
         {% if recommendations %}
         <div style="margin-top: 60px;">
 
@@ -229,6 +232,27 @@
         {% endif %}
 
         <!-- ============================================================
+             CHAT ASSISTANT
+             ============================================================ -->
+        <div class="chatbot-wrapper">
+            <div class="chatbot-card">
+                <div class="chatbot-header">
+                    <div>
+                        <h4>RKDF Chat Assistant</h4>
+                        <p>Ask about courses, eligibility, fees & admission.</p>
+                    </div>
+                </div>
+                <div class="chatbot-messages" id="chatbotMessages">
+                    <div class="chatbot-message bot">Hi there! I can help you choose the right course and answer admission questions. Ask me anything.</div>
+                </div>
+                <div class="chatbot-form">
+                    <input id="chatInput" type="text" placeholder="Type your question here..." autocomplete="off" />
+                    <button id="chatSend" class="btn btn-primary">Send</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================
              HOW IT WORKS
              ============================================================ -->
         <div style="background: #f8fbff; padding: 40px; border-radius: 12px; margin-top: 60px; margin-bottom: 40px;">
@@ -306,6 +330,98 @@
 
     .full-width {
         grid-column: 1 / -1;
+    }
+
+    .recommendation-loading,
+    .recommendation-error {
+        text-align: center;
+        padding: 28px;
+        background: #eef6ff;
+        border: 1px solid #c6dcf5;
+        border-radius: 16px;
+        color: #1b3d6f;
+        font-weight: 600;
+        margin-bottom: 30px;
+    }
+
+    .chatbot-wrapper {
+        max-width: 900px;
+        margin: 40px auto 80px;
+    }
+
+    .chatbot-card {
+        border-radius: 20px;
+        border: 1px solid rgba(102, 126, 234, 0.15);
+        background: #ffffff;
+        box-shadow: 0 18px 60px rgba(102, 126, 234, 0.08);
+        overflow: hidden;
+    }
+
+    .chatbot-header {
+        padding: 24px;
+        background: linear-gradient(135deg, #667eea, #9ca8f3);
+        color: white;
+    }
+
+    .chatbot-header h4 {
+        margin-bottom: 8px;
+    }
+
+    .chatbot-header p {
+        margin: 0;
+        font-size: 0.95rem;
+        color: rgba(255,255,255,0.85);
+    }
+
+    .chatbot-messages {
+        min-height: 240px;
+        max-height: 360px;
+        padding: 20px;
+        overflow-y: auto;
+        background: #f4f8ff;
+    }
+
+    .chatbot-message {
+        display: inline-block;
+        margin-bottom: 16px;
+        padding: 14px 18px;
+        border-radius: 18px;
+        line-height: 1.5;
+        max-width: 86%;
+    }
+
+    .chatbot-message.bot {
+        background: #ffffff;
+        border: 1px solid #dbe7ff;
+        color: #1f3251;
+    }
+
+    .chatbot-message.user {
+        background: #667eea;
+        color: white;
+        align-self: flex-end;
+    }
+
+    .chatbot-form {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 12px;
+        padding: 20px;
+        border-top: 1px solid #e6ecff;
+        background: #f7faff;
+    }
+
+    .chatbot-form input {
+        width: 100%;
+        padding: 14px 16px;
+        border: 1px solid #d0d6f4;
+        border-radius: 12px;
+        font-size: 1rem;
+        color: #1f3251;
+    }
+
+    .chatbot-form button {
+        min-width: 140px;
     }
 
     small {

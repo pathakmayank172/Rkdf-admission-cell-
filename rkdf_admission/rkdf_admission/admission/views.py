@@ -9,6 +9,7 @@ A "view" is a Python function that:
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.db.models import Count
+from django.http import JsonResponse
 from .models import AdmissionForm, COURSE_CHOICES, Course
 from decimal import Decimal
 
@@ -306,139 +307,133 @@ def contact(request):
 # -------------------------------------------------------
 # COURSE RECOMMENDATION VIEW
 # -------------------------------------------------------
+def get_course_recommendations(profile):
+    education_level = profile.get('education_level', '')
+    stream = profile.get('stream', '')
+    marks = profile.get('marks', 0)
+    budget = profile.get('budget', 999999999)
+    interests = profile.get('interests', '').strip().lower()
+
+    eligible_courses = []
+    for course in Course.objects.all():
+        if course.education_level != education_level:
+            continue
+        if course.required_stream != 'ANY' and course.required_stream != stream:
+            continue
+        if marks < float(course.min_percentage):
+            continue
+        if course.annual_fee > budget:
+            continue
+        eligible_courses.append(course)
+
+    scored_courses = []
+    for course in eligible_courses:
+        score = 0
+        reasons = []
+        if course.required_stream == stream:
+            score += 30
+            reasons.append('Perfect stream match')
+        marks_above_min = marks - float(course.min_percentage)
+        if marks_above_min > 0:
+            score += min(marks_above_min, 20)
+            reasons.append(f'Excellent marks ({marks}% vs min {course.min_percentage}%)')
+        if course.annual_fee <= budget * 0.7:
+            score += 15
+            reasons.append('Good budget fit')
+        if interests:
+            interest_text = (course.description + ' ' + course.name).lower()
+            if any(keyword in interest_text for keyword in interests.split()):
+                score += 20
+                reasons.append(f'Matches your interests ({profile.get("interests")})')
+        scored_courses.append({'course': course, 'score': score, 'reasons': reasons})
+
+    scored_courses.sort(key=lambda x: x['score'], reverse=True)
+    return scored_courses[:3]
+
+
+def serialize_recommendation(item):
+    course = item['course']
+    return {
+        'code': course.code,
+        'name': course.name,
+        'full_name': course.full_name,
+        'duration': course.duration,
+        'seats': course.seats,
+        'eligibility': f'{course.get_education_level_display()} / {course.get_required_stream_display()} / {course.min_percentage}%',
+        'annual_fee': float(course.annual_fee),
+        'total_fee': float(course.total_fee),
+        'description': course.description,
+        'career_opportunities': course.career_opportunities,
+        'average_salary': course.average_salary,
+        'score': item['score'],
+        'reasons': item['reasons'],
+        'apply_url': f'/apply/?course={course.code}',
+    }
+
+
 def course_recommendation(request):
     """
     AI-powered Course Recommendation System.
     Recommends top 3 courses based on student profile.
-    
-    Student inputs:
-    - Education Level (10+2, Graduation, etc.)
-    - Stream (PCM, PCB, Commerce, Arts, Any)
-    - Marks (12th percentage or graduation percentage)
-    - Budget (annual fee preference)
-    - Interests (optional - for future enhancement)
     """
-    
+
     recommendations = []
     student_data = {}
-    
+    no_match = False
+    message = ''
+    suggestions = []
+
     if request.method == 'POST':
-        # Collect student data
         education_level = request.POST.get('education_level', '').strip()
         stream = request.POST.get('stream', '').strip()
         marks = request.POST.get('marks', '') or 0
         budget = request.POST.get('budget', '') or 999999999
         interests = request.POST.get('interests', '').strip()
-        
-        # Store for display
+
+        try:
+            marks = float(marks)
+        except Exception:
+            marks = 0
+        try:
+            budget = float(budget)
+        except Exception:
+            budget = 999999999
+
         student_data = {
             'education_level': education_level,
             'stream': stream,
-            'marks': float(marks) if marks else 0,
-            'budget': float(budget) if budget else 0,
+            'marks': marks,
+            'budget': budget,
             'interests': interests,
         }
-        
-        try:
-            marks = float(marks) if marks else 0
-            budget = float(budget) if budget else 999999999
-        except:
-            marks = 0
-            budget = 999999999
-        
-        # ===============================================
-        # STEP 1: FILTER ELIGIBLE COURSES
-        # ===============================================
-        eligible_courses = []
-        
-        # Get all courses from database
-        all_courses = Course.objects.all()
-        
-        for course in all_courses:
-            # Check education level match
-            if course.education_level != education_level:
-                continue
-            
-            # Check stream match
-            if course.required_stream != 'ANY' and course.required_stream != stream:
-                continue
-            
-            # Check minimum percentage
-            if marks < float(course.min_percentage):
-                continue
-            
-            # Check budget
-            if course.annual_fee > budget:
-                continue
-            
-            eligible_courses.append(course)
-        
-        # ===============================================
-        # STEP 2: RANK TOP 3 COURSES
-        # ===============================================
-        # Simple ranking: courses matching stream/interests get higher scores
-        scored_courses = []
-        
-        for course in eligible_courses:
-            score = 0
-            reason = []
-            
-            # Score based on match
-            if course.required_stream == stream:
-                score += 30
-                reason.append("Perfect stream match")
-            
-            # Score based on marks exceeding minimum
-            marks_above_min = marks - float(course.min_percentage)
-            if marks_above_min > 0:
-                score += min(marks_above_min, 20)  # Max 20 points
-                reason.append(f"Excellent marks ({marks}% vs min {course.min_percentage}%)")
-            
-            # Score based on budget comfort
-            if course.annual_fee <= budget * 0.7:
-                score += 15
-                reason.append("Good budget fit")
-            
-            # Score based on interest keywords (simple matching)
-            if interests.lower():
-                interest_keywords = course.description.lower() + course.name.lower()
-                if any(keyword in interest_keywords for keyword in interests.lower().split()):
-                    score += 20
-                    reason.append(f"Matches your interests ({interests})")
-            
-            scored_courses.append({
-                'course': course,
-                'score': score,
-                'reasons': reason,
-            })
-        
-        # Sort by score (highest first)
-        scored_courses.sort(key=lambda x: x['score'], reverse=True)
-        
-        # Get top 3
-        recommendations = scored_courses[:3]
-        
-        # If no recommendations, suggest alternatives
+
+        recommendations = get_course_recommendations(student_data)
         if not recommendations:
-            context = {
-                'page_title': 'Course Recommendation',
-                'student_data': student_data,
-                'recommendations': [],
-                'no_match': True,
-                'message': 'No courses match your current criteria. Please consider:',
-                'suggestions': [
-                    '✓ Lower your budget expectations',
-                    '✓ Consider different educational streams',
-                    '✓ Check if you meet the minimum percentage requirement',
-                    '✓ Explore alternative courses at other education levels',
-                ]
+            no_match = True
+            message = 'No courses match your current criteria. Please consider:'
+            suggestions = [
+                '✓ Lower your budget expectations',
+                '✓ Consider different educational streams',
+                '✓ Check if you meet the minimum percentage requirement',
+                '✓ Explore alternative courses at other education levels',
+            ]
+
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            data = {
+                'recommendations': [serialize_recommendation(item) for item in recommendations],
+                'no_match': no_match,
+                'message': message,
+                'suggestions': suggestions,
             }
-            return render(request, 'admission/course_recommendation.html', context)
-    
+            return JsonResponse(data)
+
     context = {
         'page_title': 'Course Recommendation',
         'recommendations': recommendations,
         'student_data': student_data,
+        'no_match': no_match,
+        'message': message,
+        'suggestions': suggestions,
         'education_levels': Course.EDUCATION_LEVEL_CHOICES,
         'streams': Course.STREAM_CHOICES,
         'budget_ranges': [
