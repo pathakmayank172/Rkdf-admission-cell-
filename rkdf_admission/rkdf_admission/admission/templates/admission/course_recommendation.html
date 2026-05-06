@@ -245,6 +245,12 @@
                 <div class="chatbot-messages" id="chatbotMessages">
                     <div class="chatbot-message bot">Hi there! I can help you choose the right course and answer admission questions. Ask me anything.</div>
                 </div>
+                <div class="chatbot-suggestions" id="chatbotSuggestions">
+                    <button type="button" class="suggestion-chip">Which course suits my stream?</button>
+                    <button type="button" class="suggestion-chip">What are the eligibility criteria?</button>
+                    <button type="button" class="suggestion-chip">How much is BBA fee?</button>
+                    <button type="button" class="suggestion-chip">How do I apply?</button>
+                </div>
                 <div class="chatbot-form">
                     <input id="chatInput" type="text" placeholder="Type your question here..." autocomplete="off" />
                     <button id="chatSend" class="btn btn-primary">Send</button>
@@ -413,15 +419,98 @@
 
     .chatbot-form input {
         width: 100%;
-        padding: 14px 16px;
+        padding: 16px 18px;
         border: 1px solid #d0d6f4;
-        border-radius: 12px;
+        border-radius: 16px;
         font-size: 1rem;
         color: #1f3251;
+        transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .chatbot-form input:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.12);
+        outline: none;
     }
 
     .chatbot-form button {
         min-width: 140px;
+    }
+
+    .chatbot-suggestions {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, auto));
+        gap: 10px;
+        padding: 0 20px 16px;
+    }
+
+    .suggestion-chip {
+        border: 1px solid rgba(102, 126, 234, 0.24);
+        background: #ffffff;
+        color: #1f3251;
+        border-radius: 999px;
+        padding: 10px 16px;
+        font-size: 0.92rem;
+        cursor: pointer;
+        transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+        box-shadow: 0 6px 16px rgba(101, 126, 234, 0.08);
+    }
+
+    .suggestion-chip:hover,
+    .suggestion-chip:focus {
+        transform: translateY(-2px);
+        background: #eef2ff;
+        border-color: #667eea;
+    }
+
+    .chatbot-message {
+        display: inline-flex;
+        align-items: center;
+        margin-bottom: 16px;
+        padding: 14px 18px;
+        border-radius: 18px;
+        line-height: 1.5;
+        max-width: 86%;
+        opacity: 0;
+        transform: translateY(12px);
+        animation: messageAppear 0.35s ease forwards;
+    }
+
+    .chatbot-message.typing {
+        background: rgba(255, 255, 255, 0.88);
+        border: 1px solid rgba(214, 224, 255, 0.9);
+        color: #667eea;
+        width: min(220px, 90%);
+    }
+
+    .typing-dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: #667eea;
+        display: inline-block;
+        margin-right: 6px;
+        animation: bounceDot 1.2s infinite ease-in-out;
+    }
+
+    .typing-dot:nth-child(2) {
+        animation-delay: 0.15s;
+    }
+
+    .typing-dot:nth-child(3) {
+        animation-delay: 0.3s;
+    }
+
+    @keyframes messageAppear {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes bounceDot {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-4px); }
     }
 
     small {

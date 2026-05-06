@@ -561,14 +561,29 @@ function initChatbot() {
     var messagesContainer = document.getElementById('chatbotMessages');
     var input = document.getElementById('chatInput');
     var sendButton = document.getElementById('chatSend');
+    var suggestionContainer = document.getElementById('chatbotSuggestions');
     if (!messagesContainer || !input || !sendButton) return;
 
-    function addMessage(text, sender) {
+    function addMessage(text, sender, options) {
         var message = document.createElement('div');
         message.className = 'chatbot-message ' + sender;
-        message.textContent = text;
+        if (options && options.html) {
+            message.innerHTML = text;
+        } else {
+            message.textContent = text;
+        }
         messagesContainer.appendChild(message);
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        return message;
+    }
+
+    function addTypingIndicator() {
+        var typing = document.createElement('div');
+        typing.className = 'chatbot-message bot typing';
+        typing.innerHTML = '<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>';
+        messagesContainer.appendChild(typing);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        return typing;
     }
 
     function getBotResponse(query) {
@@ -591,26 +606,46 @@ function initChatbot() {
         if (normalized.includes('mba')) {
             return 'MBA requires graduation in any stream with 50% or higher. It helps build leadership, marketing, finance, and HR careers.';
         }
-        return 'I can help you with courses, eligibility, fees, and admission steps. Try asking “Which course suits my stream?” or “What is the eligibility for BCA?”.';
+        if (normalized.includes('apply') || normalized.includes('admission')) {
+            return 'To apply, select the course you like and visit the admission form. We can also help you choose based on eligibility, budget, and career goals.';
+        }
+        if (normalized.includes('stream') || normalized.includes('subject')) {
+            return 'Tell me your current stream or favorite subjects and I can suggest courses that match your strengths and future goals.';
+        }
+        return 'I can help you with courses, eligibility, fees, and application steps. Try asking “Which course suits my stream?” or “What is the fee for MBA?”.';
     }
 
-    function sendChat() {
-        var text = input.value.trim();
+    function sendChat(text) {
         if (!text) return;
         addMessage(text, 'user');
         input.value = '';
+        var typingIndicator = addTypingIndicator();
+        var delay = 550 + Math.random() * 300;
         setTimeout(function () {
+            typingIndicator.remove();
             addMessage(getBotResponse(text), 'bot');
-        }, 300);
+        }, delay);
     }
 
-    sendButton.addEventListener('click', sendChat);
+    function handleSuggestion(event) {
+        if (!event.target.classList.contains('suggestion-chip')) return;
+        sendChat(event.target.textContent.trim());
+    }
+
+    sendButton.addEventListener('click', function () {
+        sendChat(input.value.trim());
+    });
+
     input.addEventListener('keydown', function (event) {
         if (event.key === 'Enter') {
             event.preventDefault();
-            sendChat();
+            sendChat(input.value.trim());
         }
     });
+
+    if (suggestionContainer) {
+        suggestionContainer.addEventListener('click', handleSuggestion);
+    }
 }
 
 function initTableSearch() {
