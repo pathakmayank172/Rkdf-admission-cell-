@@ -214,8 +214,8 @@ def admission_form(request):
                 f"Your Application ID is #{admission.id}. "
                 f"Keep this for future reference."
             )
-            # Redirect to dashboard to see the application
-            return redirect('dashboard')
+            # Redirect to home page to see the application
+            return redirect('home')
 
         except Exception as e:
             messages.error(request, f"Error saving application: {str(e)}")
