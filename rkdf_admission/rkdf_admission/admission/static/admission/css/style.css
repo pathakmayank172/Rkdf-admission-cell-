@@ -567,6 +567,11 @@ p { margin-bottom: 1rem; color: var(--text-mid); }
   overflow: hidden;
 }
 
+.recommendation-form-container {
+  border: 1px solid rgba(100, 116, 139, 0.12);
+  background: rgba(255, 255, 255, 0.98);
+}
+
 .form-header {
   background: linear-gradient(135deg, var(--navy), var(--navy-light));
   padding: 40px 48px;
@@ -638,14 +643,14 @@ input[type="number"],
 select,
 textarea {
   width: 100%;
-  padding: 11px 14px;
-  border: 2px solid var(--border);
-  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  border: 1px solid #d7e0ec;
+  border-radius: 14px;
   font-family: var(--font-body);
   font-size: 0.95rem;
   color: var(--text-dark);
-  background: var(--white);
-  transition: border-color var(--transition), box-shadow var(--transition);
+  background: #f8fbff;
+  transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
   outline: none;
 }
 
