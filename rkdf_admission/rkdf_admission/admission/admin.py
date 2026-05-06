@@ -5,7 +5,7 @@ Access at: http://localhost:8000/admin/
 """
 
 from django.contrib import admin
-from .models import AdmissionForm
+from .models import AdmissionForm, Course
 
 
 # -------------------------------------------------------
@@ -45,5 +45,35 @@ class AdmissionFormAdmin(admin.ModelAdmin):
         }),
         ('Application Status', {
             'fields': ('status', 'submitted_at')
+        }),
+    )
+
+
+# -------------------------------------------------------
+# Custom Admin View for Course
+# -------------------------------------------------------
+@admin.register(Course)
+class CourseAdmin(admin.ModelAdmin):
+    """
+    Customize how Course records appear in the admin panel.
+    """
+
+    list_display = ('code', 'name', 'education_level', 'required_stream', 'min_percentage', 'annual_fee', 'seats')
+    list_filter = ('education_level', 'required_stream')
+    search_fields = ('code', 'name', 'full_name')
+    ordering = ('name',)
+
+    fieldsets = (
+        ('Basic Information', {
+            'fields': ('code', 'name', 'full_name', 'icon', 'duration', 'seats')
+        }),
+        ('Eligibility Requirements', {
+            'fields': ('education_level', 'required_stream', 'min_percentage')
+        }),
+        ('Fees', {
+            'fields': ('annual_fee', 'total_fee')
+        }),
+        ('Description & Career', {
+            'fields': ('description', 'career_opportunities', 'average_salary')
         }),
     )

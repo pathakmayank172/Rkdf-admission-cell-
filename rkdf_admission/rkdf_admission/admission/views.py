@@ -9,7 +9,8 @@ A "view" is a Python function that:
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.db.models import Count
-from .models import AdmissionForm, COURSE_CHOICES
+from .models import AdmissionForm, COURSE_CHOICES, Course
+from decimal import Decimal
 
 
 # -------------------------------------------------------
@@ -300,3 +301,153 @@ def contact(request):
         'page_title': 'Contact Us',
     }
     return render(request, 'admission/contact.html', context)
+
+
+# -------------------------------------------------------
+# COURSE RECOMMENDATION VIEW
+# -------------------------------------------------------
+def course_recommendation(request):
+    """
+    AI-powered Course Recommendation System.
+    Recommends top 3 courses based on student profile.
+    
+    Student inputs:
+    - Education Level (10+2, Graduation, etc.)
+    - Stream (PCM, PCB, Commerce, Arts, Any)
+    - Marks (12th percentage or graduation percentage)
+    - Budget (annual fee preference)
+    - Interests (optional - for future enhancement)
+    """
+    
+    recommendations = []
+    student_data = {}
+    
+    if request.method == 'POST':
+        # Collect student data
+        education_level = request.POST.get('education_level', '').strip()
+        stream = request.POST.get('stream', '').strip()
+        marks = request.POST.get('marks', '') or 0
+        budget = request.POST.get('budget', '') or 999999999
+        interests = request.POST.get('interests', '').strip()
+        
+        # Store for display
+        student_data = {
+            'education_level': education_level,
+            'stream': stream,
+            'marks': float(marks) if marks else 0,
+            'budget': float(budget) if budget else 0,
+            'interests': interests,
+        }
+        
+        try:
+            marks = float(marks) if marks else 0
+            budget = float(budget) if budget else 999999999
+        except:
+            marks = 0
+            budget = 999999999
+        
+        # ===============================================
+        # STEP 1: FILTER ELIGIBLE COURSES
+        # ===============================================
+        eligible_courses = []
+        
+        # Get all courses from database
+        all_courses = Course.objects.all()
+        
+        for course in all_courses:
+            # Check education level match
+            if course.education_level != education_level:
+                continue
+            
+            # Check stream match
+            if course.required_stream != 'ANY' and course.required_stream != stream:
+                continue
+            
+            # Check minimum percentage
+            if marks < float(course.min_percentage):
+                continue
+            
+            # Check budget
+            if course.annual_fee > budget:
+                continue
+            
+            eligible_courses.append(course)
+        
+        # ===============================================
+        # STEP 2: RANK TOP 3 COURSES
+        # ===============================================
+        # Simple ranking: courses matching stream/interests get higher scores
+        scored_courses = []
+        
+        for course in eligible_courses:
+            score = 0
+            reason = []
+            
+            # Score based on match
+            if course.required_stream == stream:
+                score += 30
+                reason.append("Perfect stream match")
+            
+            # Score based on marks exceeding minimum
+            marks_above_min = marks - float(course.min_percentage)
+            if marks_above_min > 0:
+                score += min(marks_above_min, 20)  # Max 20 points
+                reason.append(f"Excellent marks ({marks}% vs min {course.min_percentage}%)")
+            
+            # Score based on budget comfort
+            if course.annual_fee <= budget * 0.7:
+                score += 15
+                reason.append("Good budget fit")
+            
+            # Score based on interest keywords (simple matching)
+            if interests.lower():
+                interest_keywords = course.description.lower() + course.name.lower()
+                if any(keyword in interest_keywords for keyword in interests.lower().split()):
+                    score += 20
+                    reason.append(f"Matches your interests ({interests})")
+            
+            scored_courses.append({
+                'course': course,
+                'score': score,
+                'reasons': reason,
+            })
+        
+        # Sort by score (highest first)
+        scored_courses.sort(key=lambda x: x['score'], reverse=True)
+        
+        # Get top 3
+        recommendations = scored_courses[:3]
+        
+        # If no recommendations, suggest alternatives
+        if not recommendations:
+            context = {
+                'page_title': 'Course Recommendation',
+                'student_data': student_data,
+                'recommendations': [],
+                'no_match': True,
+                'message': 'No courses match your current criteria. Please consider:',
+                'suggestions': [
+                    '✓ Lower your budget expectations',
+                    '✓ Consider different educational streams',
+                    '✓ Check if you meet the minimum percentage requirement',
+                    '✓ Explore alternative courses at other education levels',
+                ]
+            }
+            return render(request, 'admission/course_recommendation.html', context)
+    
+    context = {
+        'page_title': 'Course Recommendation',
+        'recommendations': recommendations,
+        'student_data': student_data,
+        'education_levels': Course.EDUCATION_LEVEL_CHOICES,
+        'streams': Course.STREAM_CHOICES,
+        'budget_ranges': [
+            (50000, '₹50,000/year'),
+            (100000, '₹1,00,000/year'),
+            (150000, '₹1,50,000/year'),
+            (200000, '₹2,00,000/year'),
+            (300000, '₹3,00,000/year'),
+            (500000, '₹5,00,000+/year'),
+        ]
+    }
+    return render(request, 'admission/course_recommendation.html', context)

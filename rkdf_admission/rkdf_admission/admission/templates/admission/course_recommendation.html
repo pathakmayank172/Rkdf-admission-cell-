@@ -1,0 +1,319 @@
+{% extends 'admission/base.html' %}
+
+{% block title %}Course Recommendation — RKDF University Ranchi{% endblock %}
+
+{% block content %}
+
+<div class="form-page">
+    <div class="container">
+
+        <!-- ============================================================
+             PAGE HEADER
+             ============================================================ -->
+        <div class="page-header" style="text-align: center; margin-bottom: 40px;">
+            <div style="font-size: 3rem; margin-bottom: 16px;">🎓</div>
+            <h1>AI-Powered Course Recommendation</h1>
+            <p>Find the perfect course based on your profile</p>
+        </div>
+
+        <!-- ============================================================
+             RECOMMENDATION FORM
+             ============================================================ -->
+        <div class="form-container" style="max-width: 800px; margin: 0 auto;">
+
+            <form method="post" id="recommendationForm">
+                {% csrf_token %}
+
+                <!-- Form Section: Student Profile -->
+                <div class="form-section-title">📋 Your Profile</div>
+                <div class="form-grid">
+
+                    <!-- Education Level -->
+                    <div class="form-group">
+                        <label for="education_level">Education Level <span class="required">*</span></label>
+                        <select id="education_level" name="education_level" required>
+                            <option value="">-- Select --</option>
+                            {% for value, label in education_levels %}
+                            <option value="{{ value }}" 
+                                {% if student_data.education_level == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <span class="field-error"></span>
+                    </div>
+
+                    <!-- Stream/Subject -->
+                    <div class="form-group">
+                        <label for="stream">Stream/Subject <span class="required">*</span></label>
+                        <select id="stream" name="stream" required>
+                            <option value="">-- Select --</option>
+                            {% for value, label in streams %}
+                            <option value="{{ value }}" 
+                                {% if student_data.stream == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <span class="field-error"></span>
+                    </div>
+
+                    <!-- Marks/Percentage -->
+                    <div class="form-group">
+                        <label for="marks">Your Marks/Percentage <span class="required">*</span></label>
+                        <input 
+                            type="number" 
+                            id="marks" 
+                            name="marks" 
+                            placeholder="e.g., 85.5"
+                            min="0"
+                            max="100"
+                            step="0.01"
+                            value="{{ student_data.marks|default:'' }}"
+                            required
+                        >
+                        <small>Enter your 10+2 or graduation percentage</small>
+                        <span class="field-error"></span>
+                    </div>
+
+                    <!-- Budget -->
+                    <div class="form-group">
+                        <label for="budget">Annual Budget <span class="required">*</span></label>
+                        <select id="budget" name="budget" required>
+                            <option value="">-- Select Budget Range --</option>
+                            {% for value, label in budget_ranges %}
+                            <option value="{{ value }}" 
+                                {% if student_data.budget == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <span class="field-error"></span>
+                    </div>
+
+                    <!-- Interests (Optional) -->
+                    <div class="form-group full-width">
+                        <label for="interests">Your Interests (Optional)</label>
+                        <input 
+                            type="text" 
+                            id="interests" 
+                            name="interests"
+                            placeholder="e.g., Programming, Business, Science, Technology"
+                            value="{{ student_data.interests|default:'' }}"
+                        >
+                        <small>Helps us match courses to your preferences</small>
+                    </div>
+
+                </div>
+
+                <!-- Submit Button -->
+                <div style="text-align: center; margin-top: 30px;">
+                    <button type="submit" class="btn btn-primary" style="padding: 12px 40px; font-size: 16px;">
+                        🔍 Get Recommendations
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+
+        <!-- ============================================================
+             RECOMMENDATIONS RESULTS
+             ============================================================ -->
+        {% if recommendations %}
+        <div style="margin-top: 60px;">
+
+            <div style="text-align: center; margin-bottom: 40px;">
+                <h2>✅ Top 3 Recommended Courses for You</h2>
+                <p>Based on your profile and preferences</p>
+            </div>
+
+            {% for item in recommendations %}
+            <div class="course-card" style="margin-bottom: 30px; padding: 24px; border: 2px solid #e8f0f7; border-radius: 12px; background: linear-gradient(135deg, #f8fbff 0%, #f0f8ff 100%);">
+                
+                <!-- Rank Badge -->
+                <div style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 6px 12px; border-radius: 20px; font-weight: bold; margin-bottom: 12px;">
+                    {% if forloop.counter == 1 %}
+                    🥇 Rank #1 - Best Match
+                    {% elif forloop.counter == 2 %}
+                    🥈 Rank #2 - Strong Match
+                    {% else %}
+                    🥉 Rank #3 - Good Match
+                    {% endif %}
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+
+                    <!-- Left Column: Course Info -->
+                    <div>
+                        <h3 style="margin: 0 0 8px 0; color: #333;">
+                            {{ item.course.icon }} {{ item.course.name }}
+                        </h3>
+                        <p style="margin: 0 0 12px 0; color: #666; font-size: 14px;">
+                            {{ item.course.full_name }}
+                        </p>
+
+                        <div style="background: white; padding: 12px; border-radius: 8px; margin-bottom: 12px;">
+                            <p style="margin: 0; font-size: 14px; line-height: 1.6;">
+                                <strong>Duration:</strong> {{ item.course.duration }}<br>
+                                <strong>Available Seats:</strong> {{ item.course.seats }}<br>
+                                <strong>Eligibility:</strong> {{ item.course.min_percentage }}% minimum<br>
+                                <strong>Annual Fee:</strong> ₹{{ item.course.annual_fee|floatformat:0 }}<br>
+                                <strong>Total Fee:</strong> ₹{{ item.course.total_fee|floatformat:0 }}
+                            </p>
+                        </div>
+
+                        <p style="margin: 0; color: #555; font-size: 14px; line-height: 1.6;">
+                            <strong>About:</strong> {{ item.course.description }}
+                        </p>
+                    </div>
+
+                    <!-- Right Column: Match Details -->
+                    <div>
+                        <h4 style="color: #667eea; margin-top: 0;">Why It Suits You</h4>
+                        
+                        <div style="background: white; padding: 12px; border-radius: 8px; margin-bottom: 12px;">
+                            <ul style="margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.8;">
+                                {% for reason in item.reasons %}
+                                <li style="margin-bottom: 6px;">✓ {{ reason }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+
+                        <h4 style="color: #667eea;">Career Opportunities</h4>
+                        <p style="margin: 0; color: #555; font-size: 14px; line-height: 1.6;">
+                            {{ item.course.career_opportunities }}
+                        </p>
+
+                        <h4 style="color: #667eea; margin-top: 12px;">Expected Salary</h4>
+                        <div style="background: #d4e8f0; padding: 10px; border-radius: 6px; font-weight: bold; color: #333; font-size: 14px;">
+                            💰 {{ item.course.average_salary }}
+                        </div>
+
+                        <div style="margin-top: 16px;">
+                            <a href="{% url 'admission_form' %}?course={{ item.course.code }}" 
+                               class="btn btn-primary" 
+                               style="display: inline-block; padding: 10px 20px; background: #667eea; color: white; text-decoration: none; border-radius: 6px; font-size: 14px; text-align: center;">
+                                Apply for {{ item.course.name }}
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+            {% endfor %}
+
+        </div>
+        {% endif %}
+
+        <!-- ============================================================
+             NO MATCH MESSAGE
+             ============================================================ -->
+        {% if no_match %}
+        <div class="alert alert-warning" style="max-width: 700px; margin: 40px auto; padding: 24px; border-radius: 12px;">
+            <div style="font-size: 2rem; margin-bottom: 12px;">⚠️</div>
+            <h3 style="margin: 0 0 12px 0;">No Matching Courses Found</h3>
+            <p style="margin: 0 0 16px 0;">{{ message }}</p>
+            <ul style="margin: 0; padding-left: 20px;">
+                {% for suggestion in suggestions %}
+                <li style="margin-bottom: 8px;">{{ suggestion }}</li>
+                {% endfor %}
+            </ul>
+            <div style="margin-top: 20px;">
+                <p style="margin: 0; color: #666; font-size: 14px;">
+                    📞 Contact our admission team for personalized guidance: <strong>admissions@rkdf.ac.in</strong>
+                </p>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- ============================================================
+             HOW IT WORKS
+             ============================================================ -->
+        <div style="background: #f8fbff; padding: 40px; border-radius: 12px; margin-top: 60px; margin-bottom: 40px;">
+            <h3 style="text-align: center; margin-bottom: 30px;">🤖 How Our Recommendation Works</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+                
+                <div style="text-align: center;">
+                    <div style="font-size: 2.5rem; margin-bottom: 12px;">📊</div>
+                    <h4>1. Profile Analysis</h4>
+                    <p style="font-size: 14px; color: #666;">We analyze your education level, stream, marks, and budget.</p>
+                </div>
+
+                <div style="text-align: center;">
+                    <div style="font-size: 2.5rem; margin-bottom: 12px;">🔍</div>
+                    <h4>2. Eligibility Check</h4>
+                    <p style="font-size: 14px; color: #666;">We filter courses matching your eligibility criteria.</p>
+                </div>
+
+                <div style="text-align: center;">
+                    <div style="font-size: 2.5rem; margin-bottom: 12px;">⭐</div>
+                    <h4>3. Smart Ranking</h4>
+                    <p style="font-size: 14px; color: #666;">Top 3 courses ranked by best fit and your interests.</p>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+    .alert {
+        padding: 16px;
+        border-radius: 8px;
+        margin-bottom: 16px;
+    }
+
+    .alert-warning {
+        background: #fff8e1;
+        border: 1px solid #ffe082;
+        color: #856404;
+    }
+
+    .btn-primary {
+        background: #667eea;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background 0.3s;
+    }
+
+    .btn-primary:hover {
+        background: #5568d3;
+    }
+
+    .form-group select,
+    .form-group input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 14px;
+        font-family: inherit;
+    }
+
+    .form-group select:focus,
+    .form-group input:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .full-width {
+        grid-column: 1 / -1;
+    }
+
+    small {
+        display: block;
+        margin-top: 4px;
+        color: #999;
+        font-size: 12px;
+    }
+</style>
+
+{% endblock %}

@@ -21,6 +21,9 @@ urlpatterns = [
     # Courses page: http://localhost:8000/courses/
     path('courses/', views.courses, name='courses'),
 
+    # Course Recommendation: http://localhost:8000/recommend/
+    path('recommend/', views.course_recommendation, name='course_recommendation'),
+
     # Admission form: http://localhost:8000/apply/
     path('apply/', views.admission_form, name='admission_form'),
 
